@@ -5,7 +5,8 @@ import { getEventBySlug } from "@/lib/events";
 import { IEvent } from "@/database/event.model";
 import { getSimilarEventsBySlug } from "@/lib/actions/event.actions";
 import EventCard from "@/components/EventCard";
-import { log } from "node:console";
+import Booking from "@/database/booking.model";
+import { connectToDatabase } from "@/lib/mongodb";
 
 const EventDetailItem = ({ icon, alt, label }: { icon: string; alt: string; label: string }) => (
 	<div className="flex-row-gap-2 items-center">
@@ -143,12 +144,12 @@ const EventDetailsPage = async ({ params }: { params: Promise<{ slug: string }>}
 		day: "numeric",
 	});
 
-	const bookings = 10;
+	const eventIdentifier = (event as IEvent & { _id?: string })._id?.toString() ?? event.id?.toString() ?? undefined;
+
+	await connectToDatabase();
+	const bookings = eventIdentifier ? await Booking.countDocuments({ eventId: eventIdentifier }) : 0;
 
 	const similarEvents: IEvent[] = await getSimilarEventsBySlug(slug);
-
-	console.log(similarEvents);
-	
 
 	return (
 		<section id = "event">
@@ -184,8 +185,6 @@ const EventDetailsPage = async ({ params }: { params: Promise<{ slug: string }>}
 					<p>{organizer}</p>
 				</section>
 
-					console.log(tags);
-					console.log(normalizeStringArray(tags));
 				<EventTags tags={normalizeStringArray(tags)} />
 
 				</div>
@@ -198,13 +197,13 @@ const EventDetailsPage = async ({ params }: { params: Promise<{ slug: string }>}
 							<h2>Book Your Spot</h2>
 							{ bookings > 0 ? (
 								<p className="text-sm">
-									Join {bookings}people who have already booked their spot!
+									Join {bookings} people who have already booked their spot!
 								</p>
 							): (
 								<p className="text-sm">Be the first to book your spot!</p>
 							)}
 
-							<BookEvent />
+							<BookEvent eventId={eventIdentifier} eventSlug={slug} />
 						</div>
 				</aside>
 			</div>

@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
 export interface IEvent extends Document {
-	id: Key | null | undefined;
+	id: string | null | undefined;
   title: string;
   slug: string;
   description: string;

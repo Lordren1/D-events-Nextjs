@@ -16,6 +16,17 @@ const BookEvent = ({ eventId, eventSlug }: BookEventProps) => {
 	const handleSubmit = async (e: FormEvent) => {
 		e.preventDefault();
 
+		const{ success } = await createBooking({ eventId, slug, email})
+		
+		if(success) {
+			setSubmitted(true);
+
+		} else {
+			console.error('Booking creation failed', error)
+		} 
+
+		e.preventDefault();
+
 		if (isSubmitting || submitted) {
 			return;
 		}
@@ -85,3 +96,7 @@ const BookEvent = ({ eventId, eventSlug }: BookEventProps) => {
 };
 
 export default BookEvent
+
+function createBooking(arg0: { eventId: string | undefined; slug: any; email: string; }): { success: any; error: any; } | PromiseLike<{ success: any; error: any; }> {
+	throw new Error("Function not implemented.");
+}

@@ -63,6 +63,9 @@ const EventTags = ({ tags }: { tags: string[] }) => (
 
 
 const EventDetailsPage = async ({ params }: { params: Promise<{ slug: string }>}) => {
+	'use cache';
+	cacheLife('munites');
+
 	const { slug } = await params;
 	const event = await getEventBySlug(slug);
 
@@ -221,3 +224,7 @@ const EventDetailsPage = async ({ params }: { params: Promise<{ slug: string }>}
 }
 
 export default EventDetailsPage;
+
+function cacheLife(arg0: string) {
+	throw new Error("Function not implemented.");
+}
